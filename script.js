@@ -72,42 +72,37 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
-  const slides = document.querySelectorAll(".slide");
-  const dotsWrap = document.getElementById("sliderDots");
-  let current = 0;
-  let sliderTimer;
+  /* ============ 1. ABOUT SECTION GALLERY ============ */
+  const gallerySlides = document.querySelectorAll(".about-gallery-slide");
+  const galleryDotEls = document.querySelectorAll(".about-dot");
+  const galleryPrevBtn = document.getElementById("galleryPrev");
+  const galleryNextBtn = document.getElementById("galleryNext");
+  let galleryCurrent = 0;
+  let galleryTimer;
 
-  // build dots
-  slides.forEach((_, i) => {
-    const dot = document.createElement("span");
-    dot.classList.add("dot");
-    if (i === 0) dot.classList.add("active");
-    dot.addEventListener("click", () => goToSlide(i));
-    dotsWrap.appendChild(dot);
-  });
-  const dots = document.querySelectorAll(".dot");
-
-  function goToSlide(index) {
-    slides[current].classList.remove("active");
-    dots[current].classList.remove("active");
-    current = index;
-    slides[current].classList.add("active");
-    dots[current].classList.add("active");
-    resetTimer();
+  function goToGallerySlide(index) {
+    gallerySlides[galleryCurrent].classList.remove("active");
+    galleryDotEls[galleryCurrent].classList.remove("active");
+    galleryCurrent = (index + gallerySlides.length) % gallerySlides.length;
+    gallerySlides[galleryCurrent].classList.add("active");
+    galleryDotEls[galleryCurrent].classList.add("active");
+    resetGalleryTimer();
   }
 
-  function nextSlide() {
-    goToSlide((current + 1) % slides.length);
+  function resetGalleryTimer() {
+    clearInterval(galleryTimer);
+    galleryTimer = setInterval(() => goToGallerySlide(galleryCurrent + 1), 4000);
   }
 
-  function resetTimer() {
-    clearInterval(sliderTimer);
-    sliderTimer = setInterval(nextSlide, 5000);
+  if (gallerySlides.length > 0) {
+    galleryPrevBtn.addEventListener("click", () => goToGallerySlide(galleryCurrent - 1));
+    galleryNextBtn.addEventListener("click", () => goToGallerySlide(galleryCurrent + 1));
+    galleryDotEls.forEach((dot, i) => dot.addEventListener("click", () => goToGallerySlide(i)));
+    resetGalleryTimer();
   }
-
-  if (slides.length > 0) resetTimer();
 
   /* ============ 2. MOBILE NAV TOGGLE ============ */
+
   const hamburgerBtn = document.getElementById("hamburgerBtn");
   const mainNav = document.getElementById("mainNav");
 
@@ -128,7 +123,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("applyNowBtn"),
     document.getElementById("heroApplyBtn"),
     document.getElementById("aboutApplyBtn"),
-    document.getElementById("contactApplyBtn")
+    document.getElementById("contactApplyBtn"),
+    document.getElementById("admApplyBtn")
   ];
 
   function openModal() {
